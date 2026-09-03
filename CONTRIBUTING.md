@@ -5,7 +5,7 @@ spirit as YAML and TOML: clear, conservative, and testable.
 
 This repository contains the **specification only**. Test suites, the
 reference validator, and the token benchmark live in the separate
-[clif-test](../clif-test) project; interoperability tools may be separate
+[clif-test](https://github.com/clif-format/clif-test) project; interoperability tools may be separate
 projects as well.
 
 ## What we need

@@ -34,7 +34,7 @@ For a 20-entry UI translation set carrying equivalent semantics:
 | XLIFF 2.1/2.2 | 2.5–3× | open+close tag per element |
 
 Measured benchmark output is produced by the separate
-[clif-test](../../clif-test) project
+[clif-test](https://github.com/clif-format/clif-test) project
 (`clif-test/tools/token_benchmark.py`) and written to
 `clif-test/tests/benchmark/report.md`.
 

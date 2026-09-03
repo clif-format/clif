@@ -1,14 +1,14 @@
 # Security Policy
 
 CLIF is a data format. Report security issues in the reference implementation
-(`../clif-test/tools/`) privately to the maintainers before public disclosure.
+([clif-test/tools](https://github.com/clif-format/clif-test/tools)) privately to the maintainers before public disclosure.
 
 ## Scope
 
 - Ambiguities in the specification that could cause parser differentials or
   injection (e.g. strings containing markup).
 - The reference validator and benchmark scripts in the
-  [clif-test](../clif-test) project.
+  [clif-test](https://github.com/clif-format/clif-test) project.
 
 ## Out of scope
 

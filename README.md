@@ -61,7 +61,7 @@ See the [comparison](docs/comparison.md) and [design rationale](docs/design-rati
 
 ## Measured evidence
 
-CLIF claims are not editorial: the separate [clif-test](../clif-test)
+CLIF claims are not editorial: the separate [clif-test](https://github.com/clif-format/clif-test)
 project measures the format against XLIFF, PO, Fluent, JSON, YAML, CSV, Android
 and iOS on the same corpus, the same model and the same context payload
 (960 real translation calls, 16 documents, 392 entries, public raw evidence and
@@ -75,9 +75,9 @@ computed review data):
   format does not change the model); CLIF advantage is that the context payload is
   structurally guaranteed and survives editing.
 
-Summary: [BENCHMARK.md](../clif-test/BENCHMARK.md) • public data bundle:
-[benchmark/clarion-2026-09-02](../clif-test/benchmark/clarion-2026-09-02) •
-reference implementation: [clif-python](../clif-python).
+Summary: [BENCHMARK.md](https://github.com/clif-format/clif-test/blob/main/BENCHMARK.md) • public data bundle:
+[benchmark/clarion-2026-09-02](https://github.com/clif-format/clif-test/tree/main/benchmark/clarion-2026-09-02) •
+reference implementation: [clif-python](https://github.com/clif-format/clif-python).
 
 ## Contributing
 

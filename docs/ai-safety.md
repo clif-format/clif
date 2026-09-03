@@ -104,4 +104,4 @@ to a baseline file and validates after every edit:
 Acceptance: when the edit intent is valid, **100% of the edited files must
 remain valid**; deliberately invalid changes must each be caught by a precise
 error. The protocol lives in
-[clif-test/tests/edit-robustness/](../../clif-test/tests/edit-robustness/).
+[clif-test/tests/edit-robustness/](https://github.com/clif-format/clif-test/tests/edit-robustness/).
