@@ -1,7 +1,7 @@
 # Security Policy
 
 CLIF is a data format. Report security issues in the reference implementation
-([clif-test/tools](https://github.com/clif-format/clif-test/tools)) privately to the maintainers before public disclosure.
+([clif-python](https://github.com/clif-format/clif-python)) privately to the maintainers before public disclosure.
 
 ## Scope
 
