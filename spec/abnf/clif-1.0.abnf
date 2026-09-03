@@ -1,0 +1,127 @@
+; CLIF 1.0 — Contextual Localization Integrated Format
+; Normative ABNF grammar (RFC 5234; case-sensitive string literals per RFC 7405).
+;
+; LEXICAL NOTE
+; ------------
+; The grammar below operates after a lexical pre-pass that:
+;   * decodes UTF-8 (an optional leading U+FEFF BOM is removed),
+;   * normalizes CRLF to LF (a bare CR is invalid),
+;   * appends a final LF when the stream does not end with one, so that every
+;     line production below is LF-terminated,
+;   * removes blank lines (lines containing only SP / HTAB),
+;   * removes comment lines (optional SP / HTAB followed by "#").
+; Comments and blank lines may therefore appear between any two grammar
+; productions, but never inside a quoted string. Their removal is transparent
+; everywhere except one place: a blank or comment line terminates the
+; continuation of the preceding field, so a parser MUST record that boundary
+; before discarding the line (see the semantic constraints below).
+;
+; This is the TOLERANT grammar: surrounding whitespace and both ":" and "="
+; are accepted so the format is pleasant to read and type by hand. The
+; CANONICAL form is fixed in spec §Serialization: "key: value" with exactly
+; one space after the colon, section and entry lines at column 0 with no
+; trailing whitespace.
+;
+; All non-ASCII Unicode scalar values are permitted in strings and comments.
+; They are not enumerated here because RFC 5234 char-val ranges are
+; US-ASCII-oriented; parsers apply the restrictions in spec §Lexical
+; Structure.
+
+clif-file            = version-line *header-line *section
+version-line         = *WSP %s"CLIF" SP %s"1.0" *WSP LF
+
+header-line          = field-line
+section              = section-line *group-metadata-line *entry
+
+section-line         = *WSP "[" group-path "]" *WSP LF
+group-path           = name *( "." name )
+
+group-metadata-line  = field-line
+entry                = entry-line *field-line
+entry-line           = *WSP "<" name ">" *WSP LF
+                      ; single-line marker; no closing tag exists, and < > in
+                      ; strings remain ordinary payload characters.
+
+field-line           = *WSP field *WSP LF *continuation-line
+continuation-line    = *WSP ( string-value / list ) *WSP LF
+                      ; attaches to the immediately preceding field: string
+                      ; fragments only after scalar string fields, list
+                      ; fragments only after list fields.
+field                = key *WSP ( "=" / ":" ) *WSP value
+value                = string-value / list / integer / name / language-tag
+string-value         = string *( *WSP string )
+                      ; adjacent strings concatenate verbatim (C rules) and
+                      ; are allowed on any scalar string field.
+list                 = "[" *WSP [ list-items ] *WSP "]"
+list-items           = list-item *( *WSP "," *WSP list-item ) *WSP [ "," ]
+list-item            = string / integer / name / language-tag
+                      ; a list is single-line and never nests another list.
+
+key                  = name
+
+; Identifiers: lowercase kebab-case only. No uppercase letters, no
+; underscores, no dots. Fixed tags (type/emotion/status/variant) are also
+; names, which is why every fixed tag is a lowercase word.
+name                 = %x61-7A *( %x61-7A / DIGIT / "-" )
+
+integer              = 1*DIGIT
+
+; BCP 47 language tag. The full BCP 47 grammar is defined by RFC 5646 and is
+; normative; this production is a permissive envelope for ABNF completeness.
+; Comparison is case-insensitive per BCP 47.
+language-tag         = ALPHA *( ALPHA / DIGIT / "-" )
+
+string               = double-string / single-string
+double-string        = DQUOTE *( double-char / double-escape ) DQUOTE
+double-char          = %x20-21 / %x23-5B / %x5D-7E / non-ascii
+                      ; excludes DQUOTE (%x22), backslash (%x5C), controls.
+double-escape        = "\" ( DQUOTE / "\" / "n" / "r" / "t" )
+single-string        = SQUOTE *( single-char / single-escape ) SQUOTE
+single-char          = %x20-26 / %x28-5B / %x5D-7E / non-ascii
+                      ; excludes SQUOTE (%x27), backslash (%x5C), controls.
+single-escape        = "\" ( SQUOTE / "\" / "n" / "r" / "t" )
+non-ascii            = %x80-F4
+                      ; practical envelope; parsers MUST validate UTF-8
+                      ; scalar values per the specification.
+
+WSP                  = SP / HTAB
+SP                   = %x20
+HTAB                 = %x09
+DQUOTE               = %x22
+SQUOTE               = %x27
+LF                   = %x0A
+ALPHA                = %x41-5A / %x61-7A
+DIGIT                = %x30-39
+
+; Semantic constraints (enforced by validators, not by ABNF):
+;  * version-line must be the first non-ignored line and must be "CLIF 1.0".
+;  * Header fields occur before the first section-line; group metadata lines
+;    occur only before the first entry-line of a section.
+;  * namespace, clan, source-language, and target-language are all required.
+;    The layout (folder "<target-language>/<clan>.clif" or flat
+;    "<clan>.<target-language>.clif") is a delivery convention that MUST
+;    agree with the header; it never supplies missing header values.
+;  * Entry-level: source, type (direct or inherited), and status are
+;    required; target is optional and required only for status translated /
+;    reviewed / final (status initial allows a missing target).
+;  * Section paths and entry ids are unique; duplicate entry ids are a hard
+;    error (never last-wins); canonical IDs
+;    namespace.clan.group-path.entry-id are unique and lowercase kebab-case.
+;  * Fixed tag vocabularies: type, emotion, status, variant. Status tags are
+;    initial, translated, reviewed, final (XLIFF 2.x state model).
+;  * A field separator is the first "=" or ":" outside a quoted string; the
+;    entry anchor is the single-line marker "<id>". "<" and ">" have no other
+;    structural use and never pair across lines.
+;  * Every key appears at most once per scope (header, group, entry);
+;    duplicate keys are validity errors — there are no repeatable fields.
+;  * Strings containing braces must have balanced braces; the check applies
+;    to the fully concatenated value after continuation lines are joined.
+;  * List-typed fields (emotion, dependency, reference) are always written
+;    as a list, even for a single item; a bare scalar in a list-typed field
+;    is a validity error. dependency and reference list items are quoted
+;    path/string values.
+;  * Continuation lines (string fragments after scalar string fields, bare
+;    lists after list fields) concatenate verbatim / extend the list in
+;    order. A blank or comment line ends a continuation; an orphan
+;    continuation line is a syntax error. Lists themselves never span lines
+;    and list items never continue across lines.
