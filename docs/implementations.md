@@ -17,7 +17,7 @@ a PR adding it here with a link and the conformance row it passed.
 
 | Project | Language | Level | Notes |
 | --- | --- | --- | --- |
-| [clif-python](https://github.com/clif-format/clif-python) (`pyclif`) | Python 3.11+ | Validator, Parser, Serializer, Converter | MIT, zero runtime dependencies, 3 319 LOC; bidirectional converters for XLIFF, PO, Fluent, JSON, YAML, CSV, Android, iOS |
+| [clif-python](https://github.com/clif-format/clif-python) (clif-python) | Python 3.11+ | Validator, Parser, Serializer, Converter | MIT, zero runtime dependencies, 3 319 LOC; bidirectional converters for XLIFF, PO, Fluent, JSON, YAML, CSV, Android, iOS |
 | [clif-test/tools/clif_validator.py](https://github.com/clif-format/clif-test/tools/clif_validator.py) | Python 3.11+ | Validator, Serializer (test helpers) | Reference validator used by the conformance fixtures |
 
 ## Test and benchmark tooling
