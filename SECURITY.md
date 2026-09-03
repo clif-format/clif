@@ -1,7 +1,6 @@
 # Security Policy
 
-CLIF is a data format. Report security issues in the reference implementation
-([clif-python](https://github.com/clif-format/clif-python)) privately to the maintainers before public disclosure.
+CLIF is a data format.
 
 ## Scope
 
